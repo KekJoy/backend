@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 from sqlalchemy import insert
 
-from auth.models.db import async_session_maker
+from database import async_session_maker
 
 
 class AbstractRepository(ABC):

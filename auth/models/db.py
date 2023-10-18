@@ -1,15 +1,15 @@
-from typing import AsyncGenerator
-
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.sql import func
-from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey, JSON, Boolean, DateTime
-from fastapi import Depends
-from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession
+from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey, JSON, Boolean
 from sqlalchemy.orm import DeclarativeBase
 
+# from database import Base
+
 metadata = MetaData()
+
+
+class Base(DeclarativeBase):
+    pass
+
 
 role = Table(
     "role",
@@ -35,10 +35,6 @@ user = Table(
 )
 
 
-class Base(DeclarativeBase):
-    pass
-
-
 class User(SQLAlchemyBaseUserTable[int], Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
@@ -47,20 +43,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     email = Column(String, nullable=False)
     role_id = Column(Integer, ForeignKey(role.c.id))
     hashed_password: str = Column(String(length=1024), nullable=False)
-    is_active: bool = Column(Boolean, default=False, nullable=False)
-
-
-engine = create_async_engine("postgresql+asyncpg://postgres:postgres@0.0.0.0:5432/postgres")
-async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-
-
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
-        yield session
-
-
-async def get_user_db(session: AsyncSession = Depends(get_async_session)):
-    yield SQLAlchemyUserDatabase(session, User)
+    is_active: bool = Column(Boolean, default=True, nullable=False)
 
 # class Division(Base):
 #     __tablename__ = "division"

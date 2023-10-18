@@ -9,7 +9,7 @@ from auth.models.schemas import UserRead, UserCreate
 from auth.services.user import get_user_manager
 
 app = FastAPI(
-    title="detouche"
+    title="Система внешнего обучения"
 )
 
 fastapi_users = FastAPIUsers[User, int](

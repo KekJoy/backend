@@ -1,0 +1,9 @@
+SQLAlchemy~=2.0.19
+pydantic==2.1.1
+fastapi[all]
+fastapi-users[sqlalchemy]
+python-dotenv~=1.0.0
+pydantic[email]
+alembic==1.12.0
+psycopg2-binary
+asyncpg

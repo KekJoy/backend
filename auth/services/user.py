@@ -2,9 +2,12 @@ from typing import Optional
 
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin, exceptions, models, schemas
+from fastapi_users.jwt import generate_jwt
+from pydantic import EmailStr
 
 from auth.models.db import User
 from database import get_user_db
+from .emailServer import simple_send
 
 SECRET = "SECRET"
 
@@ -42,6 +45,17 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         await self.on_after_register(created_user, request)
 
         return created_user
+
+    async def on_after_request_verify(
+            self, user: User, token: str, request: Optional[Request] = None
+    ):
+        await simple_send([user.email], token)
+        print(f"Verification requested for user {user.id}. Verification token: {token}")
+
+    async def on_after_forgot_password(
+            self, user: User, token: str, request: Optional[Request] = None
+    ):
+        print(f"User {user.id} has forgot their password. Reset token: {token}")
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):

@@ -65,6 +65,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     async def on_after_forgot_password(
             self, user: User, token: str, request: Optional[Request] = None
     ):
+        await simple_send([user.email], token)
         print(f"User {user.id} has forgot their password. Reset token: {token}")
 
 

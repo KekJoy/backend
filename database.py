@@ -1,12 +1,12 @@
 from fastapi import Depends
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession
-from sqlalchemy.orm import DeclarativeBase
 
 from auth.models.db import User
-from config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
+from config import settings
 
-engine = create_async_engine(f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+engine = create_async_engine(f"postgresql+asyncpg://{settings.DB_USER}:{settings.DB_PASS}@{settings.DB_HOST}:"
+                             f"{settings.DB_PORT}/{settings.DB_NAME}")
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 

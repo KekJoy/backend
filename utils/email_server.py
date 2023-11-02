@@ -1,20 +1,23 @@
-from starlette.responses import JSONResponse
+from typing import List
+
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from pydantic import EmailStr, BaseModel
-from typing import List
-import jwt
+from starlette.responses import JSONResponse
+
+from config import settings
+
 
 class EmailSchema(BaseModel):
     email: List[EmailStr]
 
 
 conf = ConnectionConfig(
-    MAIL_USERNAME="valiullin.anton2003",
-    MAIL_PASSWORD="unuozbrnvzgctdku",
-    MAIL_FROM="valiullin.anton2003@yandex.ru",
-    MAIL_PORT=465,
-    MAIL_SERVER="smtp.yandex.ru",
-    MAIL_FROM_NAME="Desired Name",
+    MAIL_USERNAME=settings.MAIL_USERNAME,
+    MAIL_PASSWORD=settings.MAIL_PASSWORD,
+    MAIL_FROM=settings.MAIL_FROM,
+    MAIL_PORT=settings.MAIL_PORT,
+    MAIL_SERVER=settings.MAIL_SERVER,
+    MAIL_FROM_NAME=settings.MAIL_FROM_NAME,
     MAIL_STARTTLS=False,
     MAIL_SSL_TLS=True,
     USE_CREDENTIALS=True,
@@ -22,10 +25,10 @@ conf = ConnectionConfig(
 )
 
 
-async def simple_send(email: EmailSchema, token: str) -> JSONResponse:
-    html = f"""<a>Hi this test mail, thanks for using Fastapi-mail {token}</a> """
+async def simple_send(email: EmailSchema, token: str = '') -> JSONResponse:
+    html = f"""<p>http://127.0.0.1:8000/auth/verify/{token}"</p>"""
 
-    token = jwt.encode(token)
+    # token = jwt.encode(token)
 
     message = MessageSchema(
         subject="Fastapi-Mail module",

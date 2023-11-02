@@ -2,8 +2,6 @@ from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey, JSON, Boolean
 from sqlalchemy.orm import DeclarativeBase
 
-# from database import Base
-
 metadata = MetaData()
 
 

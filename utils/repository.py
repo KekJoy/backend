@@ -1,9 +1,6 @@
-'''
-Слой работы с базой данных
-'''
 from abc import ABC, abstractmethod
 
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 
 from database import async_session_maker
 
@@ -15,6 +12,10 @@ class AbstractRepository(ABC):
 
     @abstractmethod
     async def find_all(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def update_one(self):
         raise NotImplementedError
 
 

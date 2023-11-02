@@ -1,31 +1,37 @@
-from fastapi_users import FastAPIUsers
-
 from fastapi import FastAPI, Depends
 from fastapi_users import FastAPIUsers
+from starlette.middleware.cors import CORSMiddleware
 
 from auth.auth import auth_backend
 from auth.models.db import User
 from auth.models.schemas import UserRead, UserCreate
 from auth.services.user import get_user_manager
+from auth.services.user import verify_router
 
-app = FastAPI(
-    title="Система внешнего обучения"
+app = FastAPI(title="Система внешнего обучения")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
 )
 
-fastapi_users = FastAPIUsers[User, int](
+fastapi_users = FastAPIUsers(
     get_user_manager,
     [auth_backend],
 )
 
 app.include_router(
     fastapi_users.get_auth_router(auth_backend),
-    prefix="/api/v1/user",
+    prefix="/auth",
     tags=["auth"],
 )
 
 app.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/api/v1/user",
+    prefix="/auth",
     tags=["auth"],
 )
 
@@ -35,9 +41,8 @@ app.include_router(
     tags=["auth"],
 )
 
-
 app.include_router(
-    fastapi_users.get_verify_router(UserRead),
+    verify_router,
     prefix="/auth",
     tags=["auth"],
 )
@@ -53,3 +58,29 @@ def protected_route(user: User = Depends(current_user)):
 @app.get("/unprotected-route")
 def unprotected_route():
     return f"Hello, anonym"
+
+# app.include_router(
+#     fastapi_users.get_auth_router(auth_backend_refresh),
+#     prefix="/api/v1/user",
+#     tags=["auth"],
+# )
+
+
+# @app.get("/auth/jwt/refresh")
+# async def refresh_jwt(strategy=Depends(get_jwt_strategy),
+#                       refresh_token=Cookie(), user=Depends(current_user)):
+#     print('gfh')
+#     valid_token = check_refresh_token(refresh_token)
+#     if not valid_token:
+#         raise HTTPException(status_code=401, detail='Invalid token')
+#
+#     token = await strategy.write_token(user)
+#     print(token)
+#     return await cookie_transport.get_login_response(token)
+#
+# def check_refresh_token(token: str) -> bool:
+#     # Check expiry in Redis instead of in cookie
+#     # If expired then return False
+#
+#     # Sample
+#     return True
